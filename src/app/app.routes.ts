@@ -20,6 +20,7 @@ export const routes: Routes = [
       { path: 'search', loadComponent: () => import('./features/patient/doctor-search/doctor-search').then(m => m.DoctorSearchComponent) },
       { path: 'book', loadComponent: () => import('./features/patient/appointment-booking/appointment-booking').then(m => m.AppointmentBookingComponent) },
       { path: 'appointments', loadComponent: () => import('./features/patient/appointment-list/appointment-list').then(m => m.AppointmentListComponent) },
+      { path: 'medications', loadComponent: () => import('./features/patient/medication-alarms/medication-alarms').then(m => m.MedicationAlarmsComponent) },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
   },
