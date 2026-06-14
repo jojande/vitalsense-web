@@ -14,9 +14,14 @@ export class AuthService {
   currentUser = signal<UserResponse | null>(null);
 
   constructor() {
+    console.log('AuthService initialized. Token:', this.getToken());
     if (this.isAuthenticated()) {
       this.getMe().subscribe({
-        error: () => this.logout()
+        next: (user) => console.log('Session restored for:', user.email),
+        error: (err) => {
+          console.error('Session restoration failed:', err);
+          this.logout();
+        }
       });
     }
   }
