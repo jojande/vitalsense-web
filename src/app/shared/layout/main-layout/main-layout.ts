@@ -1,22 +1,19 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavigationComponent } from '../navigation/navigation';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, NavigationComponent],
+  imports: [RouterOutlet],
   template: `
-    <app-navigation></app-navigation>
-    <main class="container">
+    <main class="main-wrapper">
       <router-outlet></router-outlet>
     </main>
   `,
   styles: `
-    .container {
-      padding: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
+    .main-wrapper {
+      width: 100%;
+      height: 100vh;
     }
   `
 })
