@@ -6,11 +6,14 @@ export const roleGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
   const expectedRole = route.data['role'];
+  
+  // Try signal first, fallback to localStorage for stability during navigation
   const user = authService.currentUser();
+  const userRole = user?.role || localStorage.getItem('userRole');
 
-  console.log('RoleGuard checking...', { expectedRole, userRole: user?.role });
+  console.log('RoleGuard checking...', { expectedRole, userRole });
 
-  if (user && user.role === expectedRole) {
+  if (userRole === expectedRole) {
     return true;
   }
 

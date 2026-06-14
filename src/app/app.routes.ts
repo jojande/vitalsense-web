@@ -5,6 +5,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 import { PatientLayoutComponent } from './features/patient/patient-layout';
 import { PatientDashboardComponent } from './features/patient/patient-dashboard/patient-dashboard';
+import { DoctorLayoutComponent } from './features/doctor/doctor-layout';
 
 export const routes: Routes = [
   { path: 'auth/login', component: AuthPageComponent },
@@ -22,14 +23,15 @@ export const routes: Routes = [
   },
   { 
     path: 'doctor', 
-    component: MainLayoutComponent,
+    component: DoctorLayoutComponent,
     canActivate: [authGuard, roleGuard],
     data: { role: 'DOCTOR' },
     children: [
-      { 
-        path: 'dashboard', 
-        loadComponent: () => import('./features/doctor/doctor-dashboard/doctor-dashboard').then(m => m.DoctorDashboardComponent) 
-      },
+      { path: 'dashboard', loadComponent: () => import('./features/doctor/doctor-dashboard/doctor-dashboard').then(m => m.DoctorDashboardComponent) },
+      { path: 'calendar', loadComponent: () => import('./features/doctor/doctor-dashboard/doctor-dashboard').then(m => m.DoctorDashboardComponent) },
+      { path: 'patients', loadComponent: () => import('./features/doctor/doctor-dashboard/doctor-dashboard').then(m => m.DoctorDashboardComponent) },
+      { path: 'schedule-config', loadComponent: () => import('./features/doctor/doctor-dashboard/doctor-dashboard').then(m => m.DoctorDashboardComponent) },
+      { path: 'profile', loadComponent: () => import('./features/doctor/doctor-dashboard/doctor-dashboard').then(m => m.DoctorDashboardComponent) },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
