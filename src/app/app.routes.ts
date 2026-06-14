@@ -3,29 +3,36 @@ import { AuthPageComponent } from './features/auth/auth-page';
 import { MainLayoutComponent } from './shared/layout/main-layout/main-layout';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { PatientLayoutComponent } from './features/patient/patient-layout';
+import { PatientDashboardComponent } from './features/patient/patient-dashboard/patient-dashboard';
 
 export const routes: Routes = [
   { path: 'auth/login', component: AuthPageComponent },
   { path: 'auth/register', component: AuthPageComponent },
   { 
-    path: '', 
-    component: MainLayoutComponent,
-    canActivate: [authGuard],
+    path: 'patient', 
+    component: PatientLayoutComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { role: 'PATIENT' },
     children: [
-      { 
-        path: 'patient', 
-        loadComponent: () => import('./features/patient/patient-dashboard/patient-dashboard').then(m => m.PatientDashboardComponent),
-        canActivate: [roleGuard],
-        data: { role: 'PATIENT' }
-      },
-      { 
-        path: 'doctor', 
-        loadComponent: () => import('./features/doctor/doctor-dashboard/doctor-dashboard').then(m => m.DoctorDashboardComponent),
-        canActivate: [roleGuard],
-        data: { role: 'DOCTOR' }
-      },
-      { path: '', redirectTo: 'patient', pathMatch: 'full' } // Default redirect, can be dynamic
+      { path: 'home', component: PatientDashboardComponent },
+      { path: 'search', loadComponent: () => import('./features/patient/doctor-search/doctor-search').then(m => m.DoctorSearchComponent) },
+      { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
   },
-  { path: '**', redirectTo: '' }
+  { 
+    path: 'doctor', 
+    component: MainLayoutComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { role: 'DOCTOR' },
+    children: [
+      { 
+        path: 'dashboard', 
+        loadComponent: () => import('./features/doctor/doctor-dashboard/doctor-dashboard').then(m => m.DoctorDashboardComponent) 
+      },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+    ]
+  },
+  { path: '', redirectTo: 'patient/home', pathMatch: 'full' },
+  { path: '**', redirectTo: 'patient/home' }
 ];

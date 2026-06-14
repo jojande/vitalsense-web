@@ -8,10 +8,13 @@ export const roleGuard: CanActivateFn = (route, state) => {
   const expectedRole = route.data['role'];
   const user = authService.currentUser();
 
+  console.log('RoleGuard checking...', { expectedRole, userRole: user?.role });
+
   if (user && user.role === expectedRole) {
     return true;
   }
 
+  console.warn('Role mismatch or no user. Redirecting to login.');
   router.navigate(['/auth/login']);
   return false;
 };
