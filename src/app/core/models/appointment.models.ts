@@ -8,6 +8,7 @@ export interface AppointmentRequestDTO {
 export interface AppointmentResponseDTO {
   appointmentId: number;
   patientId: number;
+  patientName: string;
   doctorId: number;
   doctorName: string;
   doctorSpecialty: string;
