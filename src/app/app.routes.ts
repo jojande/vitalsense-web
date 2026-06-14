@@ -18,6 +18,7 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: PatientDashboardComponent },
       { path: 'search', loadComponent: () => import('./features/patient/doctor-search/doctor-search').then(m => m.DoctorSearchComponent) },
+      { path: 'book', loadComponent: () => import('./features/patient/appointment-booking/appointment-booking').then(m => m.AppointmentBookingComponent) },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
   },

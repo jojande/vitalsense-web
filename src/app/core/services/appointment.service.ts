@@ -1,8 +1,9 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AppointmentRequestDTO, AppointmentResponseDTO } from '../models/appointment.models';
+import { DoctorResponse } from '../models/doctor.models';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,8 @@ import { AppointmentRequestDTO, AppointmentResponseDTO } from '../models/appoint
 export class AppointmentService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/appointments`;
+
+  selectedDoctor = signal<DoctorResponse | null>(null);
 
   scheduleAppointment(request: AppointmentRequestDTO): Observable<AppointmentResponseDTO> {
     return this.http.post<AppointmentResponseDTO>(this.apiUrl, request);
