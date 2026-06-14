@@ -8,10 +8,17 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error) => {
-      let message = 'An unexpected error occurred';
+      // Robust check for any auth-related endpoint to let the component handle its own errors
+      const isAuthPath = req.url.toLowerCase().includes('/auth/');
+      
+      if (isAuthPath) {
+        return throwError(() => error);
+      }
+
+      let message = 'Ocurrió un error inesperado en el sistema';
       
       if (error.status === 401) {
-        message = 'Unauthorized. Please login again.';
+        message = 'No autorizado. Por favor inicie sesión nuevamente.';
       } else if (error.error instanceof ErrorEvent) {
         message = error.error.message;
       } else {

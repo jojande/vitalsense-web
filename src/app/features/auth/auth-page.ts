@@ -4,6 +4,24 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
 
+export const SPECIALTIES = [
+  { value: 'MEDICINA_GENERAL', label: 'Medicina General' },
+  { value: 'CARDIOLOGIA', label: 'Cardiología' },
+  { value: 'PEDIATRIA', label: 'Pediatría' },
+  { value: 'DERMATOLOGIA', label: 'Dermatología' },
+  { value: 'GINECOLOGIA_Y_OBSTETRICIA', label: 'Ginecología y Obstetricia' },
+  { value: 'OFTALMOLOGIA', label: 'Oftalmología' },
+  { value: 'TRAUMATOLOGIA_Y_ORTOPEDIA', label: 'Traumatología y Ortopedia' },
+  { value: 'PSIQUIATRIA', label: 'Psiquiatría' },
+  { value: 'NEUROLOGIA', label: 'Neurología' },
+  { value: 'ENDOCRINOLOGIA', label: 'Endocrinología' },
+  { value: 'GASTROENTEROLOGIA', label: 'Gastroenterología' },
+  { value: 'UROLOGIA', label: 'Urología' },
+  { value: 'OTORRINOLARINGOLOGIA', label: 'Otorrinolaringología' },
+  { value: 'ONCOLOGIA', label: 'Oncología' },
+  { value: 'ODONTOLOGIA', label: 'Odontología' },
+];
+
 @Component({
   selector: 'app-auth-page',
   standalone: true,
@@ -28,12 +46,12 @@ import { AuthService } from '../../core/services/auth.service';
           <div class="auth-tabs">
             <button 
               [class.active]="activeTab() === 'signin'" 
-              (click)="activeTab.set('signin')">
+              (click)="switchTab('signin')">
               Sign In
             </button>
             <button 
               [class.active]="activeTab() === 'signup'" 
-              (click)="activeTab.set('signup')">
+              (click)="switchTab('signup')">
               Sign Up
             </button>
           </div>
@@ -54,6 +72,10 @@ import { AuthService } from '../../core/services/auth.service';
 
           <!-- Login Form -->
           <form *ngIf="activeTab() === 'signin'" [formGroup]="loginForm" (ngSubmit)="onLogin()" class="auth-form">
+            <div class="backend-success" *ngIf="registerSuccessMessage()">
+              {{ registerSuccessMessage() }}
+            </div>
+
             <div class="form-group">
               <div class="input-with-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="input-icon">
@@ -71,8 +93,16 @@ import { AuthService } from '../../core/services/auth.service';
                 </svg>
                 <input type="password" formControlName="password" placeholder="Contraseña">
               </div>
+              <small *ngIf="isFieldInvalid('login', 'password')" class="error-text">
+                La contraseña es requerida.
+              </small>
             </div>
             <a href="#" class="forgot-password">¿Olvidé mi contraseña?</a>
+            
+            <div class="backend-error" *ngIf="loginErrorMessage()">
+              {{ loginErrorMessage() }}
+            </div>
+
             <button type="submit" class="primary-btn" [disabled]="loginForm.invalid">Iniciar Sesión</button>
           </form>
 
@@ -108,6 +138,9 @@ import { AuthService } from '../../core/services/auth.service';
                 </svg>
                 <input type="password" formControlName="password" placeholder="Contraseña">
               </div>
+              <small *ngIf="isFieldInvalid('register', 'password')" class="error-text">
+                Mínimo 8 caracteres.
+              </small>
             </div>
             
             <div class="role-selection">
@@ -130,6 +163,9 @@ import { AuthService } from '../../core/services/auth.service';
                   <div class="input-with-icon">
                     <input type="number" formControlName="age" placeholder="Edad">
                   </div>
+                  <small *ngIf="isFieldInvalid('register', 'age')" class="error-text">
+                    Edad es requerida.
+                  </small>
                 </div>
                 <div class="form-group">
                   <div class="input-with-icon">
@@ -143,8 +179,11 @@ import { AuthService } from '../../core/services/auth.service';
               </div>
               <div class="form-group">
                 <div class="input-with-icon">
-                  <input type="text" formControlName="emergencyContact" placeholder="Contacto de emergencia">
+                  <input type="tel" formControlName="emergencyContact" placeholder="Contacto de emergencia (9 dígitos)" maxlength="9">
                 </div>
+                <small *ngIf="isFieldInvalid('register', 'emergencyContact')" class="error-text">
+                  Debe tener exactamente 9 números.
+                </small>
               </div>
             </div>
 
@@ -153,19 +192,28 @@ import { AuthService } from '../../core/services/auth.service';
               <div class="form-row">
                 <div class="form-group">
                   <div class="input-with-icon">
-                    <input type="text" formControlName="specialty" placeholder="Especialidad">
+                    <select formControlName="specialty">
+                      <option value="" disabled selected>Especialidad</option>
+                      <option *ngFor="let s of specialties" [value]="s.value">{{ s.label }}</option>
+                    </select>
                   </div>
                 </div>
                 <div class="form-group">
                   <div class="input-with-icon">
                     <input type="number" formControlName="yearsOfExperience" placeholder="Años de experiencia">
                   </div>
+                  <small *ngIf="isFieldInvalid('register', 'yearsOfExperience')" class="error-text">
+                    Campo requerido.
+                  </small>
                 </div>
               </div>
               <div class="form-group">
                 <div class="input-with-icon">
                   <input type="number" formControlName="consultationFee" placeholder="Precio de consulta ($)">
                 </div>
+                <small *ngIf="isFieldInvalid('register', 'consultationFee')" class="error-text">
+                  Campo requerido.
+                </small>
               </div>
               <div class="form-group">
                 <div class="input-with-icon">
@@ -174,15 +222,19 @@ import { AuthService } from '../../core/services/auth.service';
               </div>
             </div>
 
+            <div class="backend-error" *ngIf="registerErrorMessage()">
+              {{ registerErrorMessage() }}
+            </div>
+
             <button type="submit" class="primary-btn" [disabled]="registerForm.invalid">Registrarse</button>
           </form>
 
           <footer class="auth-footer">
             <p *ngIf="activeTab() === 'signin'">
-              ¿No tienes una cuenta? <a href="javascript:void(0)" (click)="activeTab.set('signup')">Regístrate gratis</a>
+              ¿No tienes una cuenta? <a href="javascript:void(0)" (click)="switchTab('signup')">Regístrate gratis</a>
             </p>
             <p *ngIf="activeTab() === 'signup'">
-              ¿Ya tienes una cuenta? <a href="javascript:void(0)" (click)="activeTab.set('signin')">Inicia sesión</a>
+              ¿Ya tienes una cuenta? <a href="javascript:void(0)" (click)="switchTab('signin')">Inicia sesión</a>
             </p>
           </footer>
         </div>
@@ -369,7 +421,7 @@ import { AuthService } from '../../core/services/auth.service';
     .dynamic-fields-section {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 25px;
       margin-top: 10px;
     }
 
@@ -518,6 +570,36 @@ import { AuthService } from '../../core/services/auth.service';
       background: radial-gradient(circle, #e0f2fe 0%, transparent 70%);
       z-index: -1;
     }
+
+    .error-text {
+      color: #dc2626;
+      font-size: 11px;
+      margin-top: 4px;
+      margin-left: 5px;
+      display: block;
+    }
+
+    .backend-error {
+      background-color: #fef2f2;
+      color: #dc2626;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: center;
+      border: 1px solid #fee2e2;
+      margin-top: 10px;
+    }
+
+    .backend-success {
+      background-color: #f0fdf4;
+      color: #166534;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: center;
+      border: 1px solid #dcfce7;
+      margin-bottom: 15px;
+    }
   `
 })
 export class AuthPageComponent {
@@ -525,16 +607,11 @@ export class AuthPageComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  specialties = SPECIALTIES;
   activeTab = signal<'signin' | 'signup'>('signin');
-
-  constructor() {
-    const url = this.router.url;
-    if (url.includes('register')) {
-      this.activeTab.set('signup');
-    } else {
-      this.activeTab.set('signin');
-    }
-  }
+  loginErrorMessage = signal<string | null>(null);
+  registerErrorMessage = signal<string | null>(null);
+  registerSuccessMessage = signal<string | null>(null);
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -547,36 +624,114 @@ export class AuthPageComponent {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]],
     role: ['PATIENT', [Validators.required]],
-    // Patient fields
     age: [null as number | null],
     gender: [''],
     emergencyContact: [''],
-    // Doctor fields
     specialty: [''],
     yearsOfExperience: [null as number | null],
     consultationFee: [null as number | null],
-    biography: ['']
+    biography: ['', [Validators.maxLength(500)]]
   });
+
+  constructor() {
+    const url = this.router.url;
+    if (url.includes('register')) {
+      this.activeTab.set('signup');
+    } else {
+      this.activeTab.set('signin');
+    }
+
+    this.registerForm.get('role')?.valueChanges.subscribe(role => {
+      this.updateValidators(role);
+    });
+    this.updateValidators('PATIENT');
+  }
+
+  switchTab(tab: 'signin' | 'signup') {
+    this.activeTab.set(tab);
+    this.loginErrorMessage.set(null);
+    this.registerErrorMessage.set(null);
+    this.registerSuccessMessage.set(null);
+  }
+
+  private updateValidators(role: string | null) {
+    const patientFields = ['age', 'gender', 'emergencyContact'];
+    const doctorFields = ['specialty', 'yearsOfExperience', 'consultationFee'];
+
+    [...patientFields, ...doctorFields].forEach(field => {
+      const control = this.registerForm.get(field);
+      control?.clearValidators();
+      control?.updateValueAndValidity({ emitEvent: false });
+    });
+
+    if (role === 'PATIENT') {
+      this.registerForm.get('age')?.setValidators([Validators.required, Validators.min(0)]);
+      this.registerForm.get('gender')?.setValidators([Validators.required]);
+      this.registerForm.get('emergencyContact')?.setValidators([Validators.required, Validators.pattern('^[0-9]{9}$')]);
+    } else {
+      this.registerForm.get('specialty')?.setValidators([Validators.required]);
+      this.registerForm.get('yearsOfExperience')?.setValidators([Validators.required, Validators.min(0)]);
+      this.registerForm.get('consultationFee')?.setValidators([Validators.required, Validators.min(0)]);
+    }
+
+    [...patientFields, ...doctorFields].forEach(field => {
+      this.registerForm.get(field)?.updateValueAndValidity({ emitEvent: false });
+    });
+  }
+
+  isFieldInvalid(form: 'login' | 'register', field: string) {
+    const f = (form === 'login' ? this.loginForm : this.registerForm) as any;
+    const control = f.get(field);
+    return control?.invalid && (control?.touched || control?.dirty);
+  }
+
+  private formatErrorMessage(err: any, fallback: string): string {
+    let msg = fallback;
+    
+    // 1. Try to parse JSON string if responseType was 'text'
+    if (typeof err.error === 'string') {
+      try {
+        const parsed = JSON.parse(err.error);
+        msg = parsed.message || msg;
+      } catch (e) {
+        msg = err.error || msg;
+      }
+    } 
+    // 2. Use JSON object message if available
+    else if (err.error?.message) {
+      msg = err.error.message;
+    }
+    // 3. Last resort: use the standard error message but strip technical prefix
+    else if (err.message) {
+      msg = err.message.replace(/Http failure response for .*?: /i, '');
+      if (msg.includes('0 Unknown Error')) msg = 'Error de conexión con el servidor';
+    }
+
+    return msg;
+  }
 
   onLogin() {
     if (this.loginForm.valid) {
+      this.loginErrorMessage.set(null);
+      this.registerSuccessMessage.set(null);
       const credentials = this.loginForm.getRawValue() as any;
       this.authService.login(credentials).subscribe({
         next: () => {
           this.authService.getMe().subscribe({
-            next: (user: any) => {
-              this.router.navigate(['/']);
-            },
-            error: (err: any) => console.error('Failed to fetch user info', err)
+            next: () => this.router.navigate(['/']),
+            error: (err: any) => this.loginErrorMessage.set('Error al obtener perfil')
           });
         },
-        error: (err: any) => alert('Login failed: ' + (err.error?.message || 'Unknown error'))
+        error: (err: any) => {
+          this.loginErrorMessage.set(this.formatErrorMessage(err, 'Credenciales inválidas'));
+        }
       });
     }
   }
 
   onRegister() {
     if (this.registerForm.valid) {
+      this.registerErrorMessage.set(null);
       const data = this.registerForm.getRawValue() as any;
       const username = data.email.split('@')[0];
       const baseRequest = {
@@ -591,12 +746,12 @@ export class AuthPageComponent {
         ? this.authService.registerPatient({
             ...baseRequest,
             age: data.age || 0,
-            gender: data.gender || 'OTHER',
+            gender: data.gender,
             emergencyContact: data.emergencyContact || ''
           }) 
         : this.authService.registerDoctor({
             ...baseRequest,
-            specialty: data.specialty || 'General',
+            specialty: data.specialty,
             yearsOfExperience: data.yearsOfExperience || 0,
             consultationFee: data.consultationFee || 50.0,
             biography: data.biography || ''
@@ -604,10 +759,12 @@ export class AuthPageComponent {
 
       obs.subscribe({
         next: () => {
-          alert('Registration successful! Please login.');
-          this.activeTab.set('signin');
+          this.switchTab('signin');
+          this.registerSuccessMessage.set('¡Registro exitoso! Por favor inicia sesión.');
         },
-        error: (err: any) => alert('Registration failed: ' + (err.error?.message || 'Unknown error'))
+        error: (err: any) => {
+          this.registerErrorMessage.set(this.formatErrorMessage(err, 'Error en el registro'));
+        }
       });
     }
   }
