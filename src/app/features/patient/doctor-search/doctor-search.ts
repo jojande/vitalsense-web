@@ -1,7 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { DoctorService } from '../../../core/services/doctor.service';
+import { AppointmentService } from '../../../core/services/appointment.service';
 import { DoctorResponse } from '../../../core/models/doctor.models';
 import { SPECIALTIES } from '../../auth/auth-page';
 
@@ -47,7 +49,7 @@ import { SPECIALTIES } from '../../auth/auth-page';
             </div>
           </div>
           <div class="card-footer">
-            <button class="primary-btn">Agendar Cita</button>
+            <button class="primary-btn" (click)="bookAppointment(doc)">Agendar Cita</button>
           </div>
         </div>
       </div>
@@ -231,6 +233,8 @@ import { SPECIALTIES } from '../../auth/auth-page';
 })
 export class DoctorSearchComponent {
   private doctorService = inject(DoctorService);
+  private appointmentService = inject(AppointmentService);
+  private router = inject(Router);
 
   specialties = SPECIALTIES;
   specialtyControl = new FormControl('');
@@ -247,6 +251,11 @@ export class DoctorSearchComponent {
         this.doctors.set([]);
       }
     });
+  }
+
+  bookAppointment(doctor: DoctorResponse) {
+    this.appointmentService.selectedDoctor.set(doctor);
+    this.router.navigate(['/patient/book']);
   }
 
   formatSpecialty(val: string) {

@@ -2,6 +2,7 @@ export interface AppointmentRequestDTO {
   patientId: number;
   doctorId: number;
   scheduledDate: string; // ISO string
+  paymentAmount: number;
 }
 
 export interface AppointmentResponseDTO {
