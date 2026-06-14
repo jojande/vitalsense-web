@@ -30,6 +30,7 @@ export const routes: Routes = [
     data: { role: 'DOCTOR' },
     children: [
       { path: 'dashboard', loadComponent: () => import('./features/doctor/doctor-dashboard/doctor-dashboard').then(m => m.DoctorDashboardComponent) },
+      { path: 'appointments', loadComponent: () => import('./features/doctor/appointment-list/appointment-list').then(m => m.DoctorAppointmentListComponent) },
       { path: 'calendar', loadComponent: () => import('./features/doctor/doctor-dashboard/doctor-dashboard').then(m => m.DoctorDashboardComponent) },
       { path: 'patients', loadComponent: () => import('./features/doctor/doctor-dashboard/doctor-dashboard').then(m => m.DoctorDashboardComponent) },
       { path: 'schedule-config', loadComponent: () => import('./features/doctor/availability-config/availability-config').then(m => m.AvailabilityConfigComponent) },
