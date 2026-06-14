@@ -48,12 +48,16 @@ export class AuthService {
 
   getMe(): Observable<UserResponse> {
     return this.http.get<UserResponse>(`${this.apiUrl}/me`).pipe(
-      tap(user => this.currentUser.set(user))
+      tap(user => {
+        this.currentUser.set(user);
+        localStorage.setItem('userRole', user.role);
+      })
     );
   }
 
   logout(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
     this.currentUser.set(null);
   }
 

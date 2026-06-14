@@ -718,7 +718,14 @@ export class AuthPageComponent {
       this.authService.login(credentials).subscribe({
         next: () => {
           this.authService.getMe().subscribe({
-            next: () => this.router.navigate(['/']),
+            next: (user) => {
+              // Navegar según el rol
+              if (user.role === 'DOCTOR') {
+                this.router.navigate(['/doctor/dashboard']);
+              } else {
+                this.router.navigate(['/patient/home']);
+              }
+            },
             error: (err: any) => this.loginErrorMessage.set('Error al obtener perfil')
           });
         },
