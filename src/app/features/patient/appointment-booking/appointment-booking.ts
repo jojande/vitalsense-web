@@ -114,119 +114,41 @@ interface BookingSlot {
       border: 1px solid #e2e8f0;
     }
 
-    /* Doctor Summary Card */
-    .doctor-summary {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .avatar-circle {
-      width: 60px;
-      height: 60px;
-      background: #f0f9ff;
-      color: #0892d0;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      font-weight: 700;
-      border: 2px solid #e0f2fe;
-    }
-
+    .doctor-summary { display: flex; align-items: center; gap: 20px; }
+    .avatar-circle { width: 60px; height: 60px; background: #f0f9ff; color: #0892d0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; border: 2px solid #e0f2fe; }
     .doc-details h2 { margin: 0; font-size: 20px; color: #1e293b; }
-    .specialty-badge {
-      display: inline-block;
-      background: #f0fdf4;
-      color: #166534;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      margin-top: 8px;
-    }
+    .specialty-badge { display: inline-block; background: #f0fdf4; color: #166534; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-top: 8px; }
 
-    /* Availability Grid */
     .section-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 20px; }
-    
-    .availability-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-
-    .date-column {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .date-header {
-      text-align: center;
-      font-weight: 700;
-      color: #64748b;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #e2e8f0;
-      text-transform: capitalize;
-    }
-
-    .slots-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .slot-chip {
-      background: white;
-      border: 1px solid #cbd5e1;
-      padding: 10px;
-      border-radius: 12px;
-      text-align: center;
-      font-size: 14px;
-      font-weight: 600;
-      color: #334155;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
+    .availability-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .date-column { display: flex; flex-direction: column; gap: 15px; }
+    .date-header { text-align: center; font-weight: 700; color: #64748b; padding-bottom: 10px; border-bottom: 2px solid #e2e8f0; text-transform: capitalize; }
+    .slots-list { display: flex; flex-direction: column; gap: 10px; }
+    .slot-chip { background: white; border: 1px solid #cbd5e1; padding: 10px; border-radius: 12px; text-align: center; font-size: 14px; font-weight: 600; color: #334155; cursor: pointer; transition: all 0.2s; }
     .slot-chip:hover { border-color: #0892d0; background: #f0f9ff; }
     .slot-chip.selected { background: #0892d0; border-color: #0892d0; color: white; box-shadow: 0 4px 6px -1px rgba(8, 146, 208, 0.3); }
-
     .no-slots { font-size: 12px; color: #94a3b8; text-align: center; font-style: italic; }
 
-    /* Confirmation Box */
-    .confirmation-box {
-      display: flex;
-      align-items: flex-start;
-      gap: 15px;
-      background: #f0f9ff;
-      border-color: #0892d0;
-    }
-
+    .confirmation-box { display: flex; align-items: flex-start; gap: 15px; background: #f0f9ff; border-color: #0892d0; }
     .conf-icon { color: #0892d0; flex-shrink: 0; margin-top: 2px; }
     .confirmation-box p { margin: 0; color: #1e293b; line-height: 1.6; font-size: 15px; }
 
-    /* Footer */
     .booking-footer { display: flex; justify-content: flex-end; margin-top: 10px; }
-    
-    .confirm-btn {
-      background-color: #0892d0;
-      color: white;
-      border: none;
-      padding: 14px 40px;
-      border-radius: 30px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 4px 6px -1px rgba(8, 146, 208, 0.3);
-      transition: all 0.2s;
-    }
-
+    .confirm-btn { background-color: #0892d0; color: white; border: none; padding: 14px 40px; border-radius: 30px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(8, 146, 208, 0.3); transition: all 0.2s; }
     .confirm-btn:hover { background-color: #0369a1; transform: translateY(-2px); }
     .confirm-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    .error-msg { color: #ef4444; font-size: 14px; text-align: right; margin-top: 10px; font-weight: 600; }
+    .error-msg { 
+      color: #ef4444; 
+      font-size: 14px; 
+      text-align: center; 
+      margin-top: 15px; 
+      font-weight: 600; 
+      background: #fef2f2;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid #fee2e2;
+    }
 
     .empty-state { text-align: center; padding: 100px 20px; }
     .primary-btn { background: #0892d0; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; margin-top: 20px; }
@@ -317,6 +239,33 @@ export class AppointmentBookingComponent implements OnInit {
     this.errorMessage.set(null);
   }
 
+  private formatErrorMessage(err: any, fallback: string): string {
+    let msg = fallback;
+    
+    // Technical message filtering
+    const rawError = typeof err.error === 'string' ? err.error : (err.error?.message || err.message || '');
+    
+    if (rawError.includes('Doctor already has an appointment')) {
+      return 'El médico ya tiene una cita a la hora seleccionada';
+    }
+
+    if (typeof err.error === 'string') {
+      try {
+        const parsed = JSON.parse(err.error);
+        msg = parsed.message || msg;
+      } catch (e) {
+        msg = err.error || msg;
+      }
+    } else if (err.error?.message) {
+      msg = err.error.message;
+    } else if (err.message) {
+      msg = err.message.replace(/Http failure response for .*?: /i, '');
+      if (msg.includes('0 Unknown Error')) msg = 'Error de conexión con el servidor';
+    }
+
+    return msg;
+  }
+
   confirmBooking() {
     const user = this.authService.currentUser();
     const slot = this.selectedSlot();
@@ -336,7 +285,7 @@ export class AppointmentBookingComponent implements OnInit {
           this.router.navigate(['/patient/appointments']);
         },
         error: (err) => {
-          this.errorMessage.set(err.error?.message || 'Error al agendar la cita. Por favor intenta de nuevo.');
+          this.errorMessage.set(this.formatErrorMessage(err, 'Error al agendar la cita. Por favor intenta de nuevo.'));
           this.isSubmitting.set(false);
         }
       });

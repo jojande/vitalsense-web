@@ -11,7 +11,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       // Allow specific feature components to handle their own localized errors
       const skipGlobalAlert = 
         req.url.toLowerCase().includes('/auth/') || 
-        req.url.toLowerCase().includes('/availability/');
+        req.url.toLowerCase().includes('/availability/') ||
+        req.url.toLowerCase().includes('/appointments');
       
       if (skipGlobalAlert) {
         return throwError(() => error);

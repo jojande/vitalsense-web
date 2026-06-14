@@ -1,12 +1,16 @@
-import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { AppointmentService } from '../../../core/services/appointment.service';
+import { AppointmentResponseDTO } from '../../../core/models/appointment.models';
+import { SPECIALTIES } from '../../auth/auth-page';
 
 @Component({
   selector: 'app-patient-dashboard',
   standalone: true,
   imports: [CommonModule, RouterLink],
+  providers: [DatePipe],
   template: `
     <div class="workspace-content">
       <header class="workspace-header">
@@ -26,16 +30,16 @@ import { AuthService } from '../../../core/services/auth.service';
           <div *ngIf="nextAppointment(); else noAppointment" class="appointment-details">
             <div class="doc-info">
               <h3>{{ nextAppointment()?.doctorName }}</h3>
-              <p>{{ nextAppointment()?.specialty }}</p>
+              <p>{{ formatSpecialty(nextAppointment()?.doctorSpecialty || '') }}</p>
             </div>
             <div class="time-info">
               <div class="info-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                <span>{{ nextAppointment()?.date }}</span>
+                <span>{{ formatDate(nextAppointment()?.scheduledDate || '') }}</span>
               </div>
               <div class="info-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                <span>{{ nextAppointment()?.time }}</span>
+                <span>{{ formatTime(nextAppointment()?.scheduledDate || '') }}</span>
               </div>
             </div>
           </div>
@@ -46,8 +50,8 @@ import { AuthService } from '../../../core/services/auth.service';
           </ng-template>
 
           <div class="card-actions" *ngIf="nextAppointment()">
-            <button class="text-btn">Reprogramar</button>
-            <button class="text-btn danger">Cancelar</button>
+            <button class="text-btn" (click)="reschedule()">Reprogramar</button>
+            <button class="text-btn danger" (click)="cancel()">Cancelar</button>
           </div>
         </div>
 
@@ -165,17 +169,61 @@ import { AuthService } from '../../../core/services/auth.service';
     }
   `
 })
-export class PatientDashboardComponent {
+export class PatientDashboardComponent implements OnInit {
   private authService = inject(AuthService);
+  private appointmentService = inject(AppointmentService);
+  private datePipe = inject(DatePipe);
 
   userName = () => this.authService.currentUser()?.firstName || 'Paciente';
 
-  nextAppointment = signal<any | null>(null);
+  nextAppointment = signal<AppointmentResponseDTO | null>(null);
   medications = signal<any[]>([]);
+
+  ngOnInit() {
+    this.loadNextAppointment();
+  }
+
+  loadNextAppointment() {
+    const user = this.authService.currentUser();
+    if (user?.profileId) {
+      this.appointmentService.getAppointmentsByPatientId(user.profileId).subscribe({
+        next: (appointments) => {
+          const now = new Date();
+          const upcoming = appointments
+            .filter(a => new Date(a.scheduledDate) > now && a.status !== 'CANCELLED')
+            .sort((a, b) => new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime());
+          
+          if (upcoming.length > 0) {
+            this.nextAppointment.set(upcoming[0]);
+          }
+        }
+      });
+    }
+  }
+
+  formatDate(dateStr: string) {
+    return this.datePipe.transform(new Date(dateStr), "dd/MM/yyyy", '', 'es-ES');
+  }
+
+  formatTime(dateStr: string) {
+    return this.datePipe.transform(new Date(dateStr), "HH:mm 'hrs'", '', 'es-ES');
+  }
+
+  formatSpecialty(val: string) {
+    return SPECIALTIES.find(s => s.value === val)?.label || val;
+  }
 
   toggleMed(id: number) {
     this.medications.update(meds => 
       meds.map(m => m.id === id ? { ...m, taken: !m.taken } : m)
     );
+  }
+
+  reschedule() {
+    alert('Funcionalidad de reprogramación próximamente.');
+  }
+
+  cancel() {
+    alert('Funcionalidad de cancelación próximamente.');
   }
 }
