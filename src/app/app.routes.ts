@@ -19,6 +19,7 @@ export const routes: Routes = [
       { path: 'home', component: PatientDashboardComponent },
       { path: 'search', loadComponent: () => import('./features/patient/doctor-search/doctor-search').then(m => m.DoctorSearchComponent) },
       { path: 'book', loadComponent: () => import('./features/patient/appointment-booking/appointment-booking').then(m => m.AppointmentBookingComponent) },
+      { path: 'appointments', loadComponent: () => import('./features/patient/appointment-list/appointment-list').then(m => m.AppointmentListComponent) },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
   },
