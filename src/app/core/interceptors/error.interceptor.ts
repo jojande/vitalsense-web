@@ -8,10 +8,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error) => {
-      // Robust check for any auth-related endpoint to let the component handle its own errors
-      const isAuthPath = req.url.toLowerCase().includes('/auth/');
+      // Allow specific feature components to handle their own localized errors
+      const skipGlobalAlert = 
+        req.url.toLowerCase().includes('/auth/') || 
+        req.url.toLowerCase().includes('/availability/');
       
-      if (isAuthPath) {
+      if (skipGlobalAlert) {
         return throwError(() => error);
       }
 
