@@ -30,7 +30,7 @@ export const routes: Routes = [
       { path: 'dashboard', loadComponent: () => import('./features/doctor/doctor-dashboard/doctor-dashboard').then(m => m.DoctorDashboardComponent) },
       { path: 'calendar', loadComponent: () => import('./features/doctor/doctor-dashboard/doctor-dashboard').then(m => m.DoctorDashboardComponent) },
       { path: 'patients', loadComponent: () => import('./features/doctor/doctor-dashboard/doctor-dashboard').then(m => m.DoctorDashboardComponent) },
-      { path: 'schedule-config', loadComponent: () => import('./features/doctor/doctor-dashboard/doctor-dashboard').then(m => m.DoctorDashboardComponent) },
+      { path: 'schedule-config', loadComponent: () => import('./features/doctor/availability-config/availability-config').then(m => m.AvailabilityConfigComponent) },
       { path: 'profile', loadComponent: () => import('./features/doctor/doctor-dashboard/doctor-dashboard').then(m => m.DoctorDashboardComponent) },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
