@@ -1,7 +1,7 @@
 [build]
   # Empty base tells Netlify the package.json is in the root
   base = ""
-  command = "npm run build"
+  command = "npm run build -- --configuration production"
   publish = "dist/vitalsense-web/browser"
 
 # SPA Routing: Fallback everything to index.html
