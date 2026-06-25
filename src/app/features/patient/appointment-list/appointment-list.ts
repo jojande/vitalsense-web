@@ -8,12 +8,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AvailabilityService } from '../../../core/services/availability.service';
 import { RescheduleAppointmentComponent } from '../reschedule-appointment/reschedule-appointment';
+import { ViewPrescriptionComponent } from '../../doctor/createPrescription/view-prescriptions';
 
 
 @Component({
   selector: 'app-appointment-list',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule, RescheduleAppointmentComponent],
+  imports: [CommonModule, MatSnackBarModule, RescheduleAppointmentComponent, ViewPrescriptionComponent],
   providers: [DatePipe],
   template: `
     <div class="appointments-view">
@@ -51,8 +52,8 @@ import { RescheduleAppointmentComponent } from '../reschedule-appointment/resche
             </div>
             
             <div class="card-actions">
-              <button class="action-link" *ngIf="appt.meetLink" (click)="openMeet(appt.meetLink)">
-                Unirse a Cita
+              <button class="action-link" (click)="prescriptionTarget.set(appt)">
+                Ver Receta
               </button>
               
               <button class="action-link" (click)="rescheduleTarget.set(appt)">
@@ -63,6 +64,11 @@ import { RescheduleAppointmentComponent } from '../reschedule-appointment/resche
                 Cancelar
               </button>
             </div>
+            <app-view-prescription
+              *ngIf="prescriptionTarget()"
+              [appointment]="prescriptionTarget()!"
+              (closed)="prescriptionTarget.set(null)"
+            />
           </div>
           <div
             class="reschedule-panel"
@@ -227,6 +233,7 @@ export class AppointmentListComponent implements OnInit {
   selectedSlot = signal<any | null>(null);
   isLoadingSlots = signal(false);
   rescheduleTarget = signal<AppointmentResponseDTO | null>(null);
+  prescriptionTarget = signal<AppointmentResponseDTO | null>(null);
 
   ngOnInit() {
     this.loadAppointments();

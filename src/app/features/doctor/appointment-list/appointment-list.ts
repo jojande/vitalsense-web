@@ -3,11 +3,12 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { AppointmentService } from '../../../core/services/appointment.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { AppointmentResponseDTO } from '../../../core/models/appointment.models';
+import { CreatePrescriptionComponent } from '../createPrescription/create-prescription';
 
 @Component({
   selector: 'app-doctor-appointment-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CreatePrescriptionComponent],
   providers: [DatePipe],
   template: `
     <div class="appointments-view">
@@ -45,6 +46,7 @@ import { AppointmentResponseDTO } from '../../../core/models/appointment.models'
                 Iniciar Consulta
               </button>
               <button class="action-link" (click)="viewDetails(appt)">Ver Detalles</button>
+              <button class="action-link" (click)="prescriptionTarget.set(appt)">Registrar Receta</button>
             </div>
           </div>
         </div>
@@ -62,6 +64,12 @@ import { AppointmentResponseDTO } from '../../../core/models/appointment.models'
       <ng-template #loading>
         <div class="loading-state">Cargando consultas...</div>
       </ng-template>
+      <app-create-prescription
+        *ngIf="prescriptionTarget()"
+        [appointment]="prescriptionTarget()!"
+        (closed)="prescriptionTarget.set(null)"
+        (saved)="loadAppointments()"
+      />
     </div>
   `,
   styles: `
@@ -151,6 +159,7 @@ export class DoctorAppointmentListComponent implements OnInit {
 
   bookedAppointments = signal<AppointmentResponseDTO[]>([]);
   isLoading = signal(true);
+  prescriptionTarget = signal<AppointmentResponseDTO | null>(null);
 
   ngOnInit() {
     this.loadAppointments();
