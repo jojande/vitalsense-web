@@ -52,6 +52,7 @@ import { RescheduleAppointmentComponent } from '../reschedule-appointment/resche
             
             <div class="card-actions">
               <button class="action-link" *ngIf="appt.meetLink" (click)="openMeet(appt.meetLink)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
                 Unirse a Cita
               </button>
               
@@ -97,14 +98,6 @@ import { RescheduleAppointmentComponent } from '../reschedule-appointment/resche
               </button>
 
             </div>
-
-            <button
-              class="confirm-btn"
-              [disabled]="!selectedSlot()"
-              (click)="confirmReschedule()"
-            >
-              Confirmar nueva fecha
-            </button>
           </div>
         </div>
 
@@ -216,8 +209,6 @@ export class AppointmentListComponent implements OnInit {
   private appointmentService = inject(AppointmentService);
   private authService = inject(AuthService);
   private datePipe = inject(DatePipe);
-  private snackBar = inject(MatSnackBar);
-  private availabilityService = inject(AvailabilityService);
 
   bookedAppointments = signal<AppointmentResponseDTO[]>([]);
   isLoading = signal(true);
@@ -278,127 +269,11 @@ export class AppointmentListComponent implements OnInit {
     window.open(link, '_blank');
   }
 
-  reschedule(appt: AppointmentResponseDTO) {
-
-    this.selectedAppointment.set(appt);
-
-    this.selectedSlot.set(null);
-
-    this.isLoadingSlots.set(true);
-
-    this.availabilityService
-      .getDoctorAvailability(appt.doctorId)
-      .subscribe({
-
-        next: (slots) => {
-
-          const available = slots.filter(
-            (s: any) => s.available
-          );
-
-          this.availableSlots.set(available);
-
-          this.isLoadingSlots.set(false);
-        },
-
-        error: () => {
-
-          this.snackBar.open(
-            'No se pudo cargar la disponibilidad',
-            'Cerrar',
-            { duration: 3000 }
-          );
-
-          this.isLoadingSlots.set(false);
-        }
-      });
+  reschedule(appt: any) {
+    alert('Funcionalidad de reprogramación próximamente.');
   }
 
-  cancel(appt: AppointmentResponseDTO) {
-   this.appointmentService
-     .cancelAppointment(appt.appointmentId)
-      .subscribe({
-       next: () => {
-         this.snackBar.open('Cita cancelada correctamente', 'Cerrar', { duration: 3000 });
-          this.loadAppointments();
-        },
-        error: (err) => {
-          this.snackBar.open(
-            'No se pudo cancelar la cita',
-            'Cerrar',
-            { duration: 3000 }
-          );
-        }
-      });
-  }
-
-  loadAvailableSlots(appt: AppointmentResponseDTO) {
-
-  this.selectedAppointment.set(appt);
-  this.isLoadingSlots.set(true);
-
-  this.availabilityService
-    .getDoctorAvailability(appt.doctorId)
-    .subscribe({
-      next: (slots) => {
-
-        const available = slots.filter(
-          s => s.available === true
-        );
-
-        this.availableSlots.set(available);
-
-        this.isLoadingSlots.set(false);
-      },
-      error: () => {
-        this.snackBar.open(
-          'No se pudieron cargar los horarios',
-          'Cerrar',
-          { duration: 3000 }
-        );
-
-        this.isLoadingSlots.set(false);
-      }
-    });
-  }
-
-  confirmReschedule() {
-
-    const appointment = this.selectedAppointment();
-    const slot = this.selectedSlot();
-
-    if (!appointment || !slot) {
-      return;
-    }
-
-    this.appointmentService
-      .rescheduleAppointment(
-        appointment.appointmentId,
-        slot.startTime
-      )
-      .subscribe({
-        next: () => {
-
-          this.snackBar.open(
-            'Cita reprogramada correctamente',
-            'Cerrar',
-            { duration: 3000 }
-          );
-
-          this.selectedAppointment.set(null);
-          this.selectedSlot.set(null);
-
-          this.loadAppointments();
-        },
-
-        error: () => {
-
-          this.snackBar.open(
-            'No se pudo reprogramar la cita',
-            'Cerrar',
-            { duration: 3000 }
-          );
-        }
-      });
+  cancel(appt: any) {
+    alert('Funcionalidad de cancelación próximamente.');
   }
 }
