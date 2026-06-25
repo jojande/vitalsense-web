@@ -11,6 +11,7 @@ import { DoctorResponse } from '../models/doctor.models';
 export class AppointmentService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/appointments`;
+  
 
   selectedDoctor = signal<DoctorResponse | null>(null);
 
