@@ -7,11 +7,13 @@ import { SPECIALTIES } from '../../auth/auth-page';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AvailabilityService } from '../../../core/services/availability.service';
+import { RescheduleAppointmentComponent } from '../reschedule-appointment/reschedule-appointment';
+
 
 @Component({
   selector: 'app-appointment-list',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule],
+  imports: [CommonModule, MatSnackBarModule, RescheduleAppointmentComponent],
   providers: [DatePipe],
   template: `
     <div class="appointments-view">
@@ -53,7 +55,7 @@ import { AvailabilityService } from '../../../core/services/availability.service
                 Unirse a Cita
               </button>
               
-              <button class="action-link" (click)="loadAvailableSlots(appt)">
+              <button class="action-link" (click)="rescheduleTarget.set(appt)">
                 Reprogramar
               </button>
 
@@ -120,6 +122,12 @@ import { AvailabilityService } from '../../../core/services/availability.service
       <ng-template #loading>
         <div class="loading-state">Cargando tus citas...</div>
       </ng-template>
+      <app-reschedule-appointment
+       *ngIf="rescheduleTarget()"
+      [appointment]="rescheduleTarget()!"
+      (closed)="rescheduleTarget.set(null)"
+      (rescheduled)="loadAppointments()"
+      />
     </div>
   `,
   styles: `
@@ -218,6 +226,7 @@ export class AppointmentListComponent implements OnInit {
   availableSlots = signal<any[]>([]);
   selectedSlot = signal<any | null>(null);
   isLoadingSlots = signal(false);
+  rescheduleTarget = signal<AppointmentResponseDTO | null>(null);
 
   ngOnInit() {
     this.loadAppointments();
