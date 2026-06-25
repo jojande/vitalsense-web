@@ -4,11 +4,16 @@ import { AppointmentService } from '../../../core/services/appointment.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { AppointmentResponseDTO } from '../../../core/models/appointment.models';
 import { SPECIALTIES } from '../../auth/auth-page';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { AvailabilityService } from '../../../core/services/availability.service';
+import { RescheduleAppointmentComponent } from '../reschedule-appointment/reschedule-appointment';
+
 
 @Component({
   selector: 'app-appointment-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatSnackBarModule, RescheduleAppointmentComponent],
   providers: [DatePipe],
   template: `
     <div class="appointments-view">
@@ -50,8 +55,48 @@ import { SPECIALTIES } from '../../auth/auth-page';
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
                 Unirse a Cita
               </button>
-              <button class="action-link" (click)="reschedule(appt)">Reprogramar</button>
-              <button class="action-link danger" (click)="cancel(appt)">Cancelar</button>
+              
+              <button class="action-link" (click)="rescheduleTarget.set(appt)">
+                Reprogramar
+              </button>
+
+              <button class="action-link danger" (click)="cancel(appt)">
+                Cancelar
+              </button>
+            </div>
+          </div>
+          <div
+            class="reschedule-panel"
+            *ngIf="selectedAppointment()"
+          >
+
+            <h3>
+              Reprogramar cita con
+              {{ selectedAppointment()?.doctorName }}
+            </h3>
+
+            <div *ngIf="isLoadingSlots()">
+              Cargando horarios...
+            </div>
+
+            <div
+              class="slots-container"
+              *ngIf="!isLoadingSlots()"
+            >
+
+              <button
+                *ngFor="let slot of availableSlots()"
+                class="slot-btn"
+                [class.selected]="selectedSlot()?.availabilityId === slot.availabilityId"
+                (click)="selectedSlot.set(slot)"
+              >
+
+                {{ formatDate(slot.startTime) }}
+                -
+                {{ formatTime(slot.startTime) }}
+
+              </button>
+
             </div>
           </div>
         </div>
@@ -70,6 +115,12 @@ import { SPECIALTIES } from '../../auth/auth-page';
       <ng-template #loading>
         <div class="loading-state">Cargando tus citas...</div>
       </ng-template>
+      <app-reschedule-appointment
+       *ngIf="rescheduleTarget()"
+      [appointment]="rescheduleTarget()!"
+      (closed)="rescheduleTarget.set(null)"
+      (rescheduled)="loadAppointments()"
+      />
     </div>
   `,
   styles: `
@@ -161,6 +212,12 @@ export class AppointmentListComponent implements OnInit {
 
   bookedAppointments = signal<AppointmentResponseDTO[]>([]);
   isLoading = signal(true);
+
+  selectedAppointment = signal<AppointmentResponseDTO | null>(null);
+  availableSlots = signal<any[]>([]);
+  selectedSlot = signal<any | null>(null);
+  isLoadingSlots = signal(false);
+  rescheduleTarget = signal<AppointmentResponseDTO | null>(null);
 
   ngOnInit() {
     this.loadAppointments();
