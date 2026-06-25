@@ -29,4 +29,24 @@ export class AppointmentService {
   getAppointmentById(id: number): Observable<AppointmentResponseDTO> {
     return this.http.get<AppointmentResponseDTO>(`${this.apiUrl}/${id}`);
   }
+  
+  cancelAppointment(id: number): Observable<AppointmentResponseDTO> {
+    return this.http.put<AppointmentResponseDTO>(
+      `${this.apiUrl}/${id}/cancel`,
+      {}
+    );
+  }
+
+  rescheduleAppointment(
+    id: number,
+    newScheduledDate: string
+  ): Observable<AppointmentResponseDTO> {
+    return this.http.put<AppointmentResponseDTO>(
+      `${this.apiUrl}/${id}/reschedule`,
+      {
+        newScheduledDate
+      }
+    );
+  }
+  
 }
