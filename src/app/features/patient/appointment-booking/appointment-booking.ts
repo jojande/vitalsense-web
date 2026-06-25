@@ -275,7 +275,7 @@ export class AppointmentBookingComponent implements OnInit {
       this.errorMessage.set(null);
 
       this.appointmentService.scheduleAppointment({
-        patientId: user.profileId,
+        patientId: user.profileId,  
         doctorId: this.doctor()!.doctorId,
         scheduledDate: slot.start,
         paymentAmount: this.doctor()!.consultationFee
